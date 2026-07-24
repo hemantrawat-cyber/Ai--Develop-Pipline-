@@ -1,0 +1,32 @@
+name: AI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest
+
+      - name: Security Scan
+        run: |
+          pip install bandit
+          bandit -r .
+
+      - name: Build Docker
+        run: docker build -t ai-app .
